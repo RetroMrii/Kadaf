@@ -157,6 +157,9 @@ MonoBehaviour:
   lastRecruitRoomOfferedAt: -99
   shopRoomsSeen: 0
   lastShopRoomOfferedAt: -99
+  gold: 100
+  shopItemPool: []
+  currentShopInventory: []
   currentHealRoomUsed: 0
   currentRoom:
     roomType: 0

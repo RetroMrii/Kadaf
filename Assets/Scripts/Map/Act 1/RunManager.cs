@@ -14,6 +14,12 @@ public class RunManager : MonoBehaviour
     public int lastRecruitRoomOfferedAt = -99;
     public int shopRoomsSeen = 0;
     public int lastShopRoomOfferedAt = -99;
+    public int gold = 100;
+    public List<ShopItemData> shopItemPool = new List<ShopItemData>();
+    public List<ShopItemData> currentShopInventory = new List<ShopItemData>();
+    public List<ShopItemData> ownedActivatedItems = new List<ShopItemData>();
+    public List<ShopItemData> ownedRoundBuffItems = new List<ShopItemData>();
+    [SerializeField] private List<ShopItemData> initialShopItemPool = new List<ShopItemData>();
     public bool currentHealRoomUsed = false;
     public RoomData currentRoom;
     public RoomOfferSet currentOfferSet;
@@ -49,6 +55,7 @@ public class RunManager : MonoBehaviour
         currentRoom = null;
         currentOfferSet = null;
         party.Clear();
+        shopItemPool = new List<ShopItemData>(initialShopItemPool);
 
         if (selectedHero != null)
         {
@@ -114,8 +121,8 @@ public class RunManager : MonoBehaviour
                 break;
 
             case RoomType.Shop:
-                ResolveShopRoom();
-                break;
+                GenerateShopInventory();
+                SceneManager.LoadScene("ShopScene");
 
             case RoomType.Recruit:
                 currentRecruitRoomUsed = false;
@@ -191,11 +198,98 @@ public class RunManager : MonoBehaviour
 
     private void ResolveShopRoom()
     {
-        Debug.Log("Shop placeholder");
+        GenerateShopInventory();
+        SceneManager.LoadScene("ShopScene");
+    }
+
+    public void GenerateShopInventory()
+    {
+        currentShopInventory = ShopGenerator.GenerateShopInventory(shopItemPool, 10);
+    }
+
+    public void LeaveShop()
+    {
         roomsCleared++;
         GenerateNextOfferSet();
-        SceneManager.LoadScene("PickScene");
     }
+
+    public bool TryBuyShopItem(ShopItemData item)
+    {
+        if (item == null)
+            return false;
+
+        if (gold < item.price)
+            return false;
+
+        gold -= item.price;
+        ApplyShopItem(item);
+        currentShopInventory.Remove(item);
+
+        return true;
+    }
+
+    private void ApplyShopItem(ShopItemData item)
+    {
+        if (item == null)
+            return;
+
+        switch (item.itemType)
+        {
+            case ShopItemType.Heal:
+                ApplyHealItem(item);
+                break;
+
+            case ShopItemType.RoundBuff:
+                ApplyRoundBuffItem(item);
+                break;
+
+            case ShopItemType.ActivatedBuff:
+                ApplyActivatedBuffItem(item);
+                break;
+
+            case ShopItemType.Revive:
+                ApplyReviveItem(item);
+                break;
+        }
+    }
+
+    private void ApplyHealItem(ShopItemData item)
+    {
+        for (int i = 0; i < party.Count; i++)
+        {
+            if (!party[i].isAvailable)
+                continue;
+
+            int healAmount = Mathf.CeilToInt(party[i].maxHP * (item.healPercent / 100f));
+            party[i].currentHP = Mathf.Min(party[i].currentHP + healAmount, party[i].maxHP);
+        }
+    }
+
+    private void ApplyRoundBuffItem(ShopItemData item)
+    {
+        ownedRoundBuffItems.Add(item);
+        Debug.Log($"Purchased round buff: {item.itemName}");
+    }
+
+    private void ApplyActivatedBuffItem(ShopItemData item)
+    {
+        ownedActivatedItems.Add(item);
+        Debug.Log($"Purchased activated buff: {item.itemName}");
+    }
+
+    private void ApplyReviveItem(ShopItemData item)
+    {
+        for (int i = 0; i < party.Count; i++)
+        {
+            if (!party[i].isAvailable)
+            {
+                party[i].isAvailable = true;
+                party[i].currentHP = 1;
+                return;
+            }
+        }
+    }
+
 
     public void RecruitHero()
     {
