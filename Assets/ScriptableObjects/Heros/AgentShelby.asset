@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d28ab8a81b57542819ebc9abe32f64, type: 3}
+  m_Name: AgentShelby
+  m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  heroName: Agent Shelby
+  description: TBD
+  maxHP: 168
+  BonusDMG: 7
+  defense: 5
+  maxMana: 3
+  manaPerTurn: 1
+  fireResistancePercent: 7
+  dodgeChancePercent: 10
+  extraTurnChancePercent: 5
+  passive: 1
+  abilities:
+  - {fileID: 11400000, guid: b1a69645e70160e408b64b0030795515, type: 2}
+  - {fileID: 11400000, guid: 841783681abdafc4f8cc1b5ae327b471, type: 2}
+  - {fileID: 11400000, guid: 6bf04d83c9eb8e5408f0ee1d932a2c3a, type: 2}
