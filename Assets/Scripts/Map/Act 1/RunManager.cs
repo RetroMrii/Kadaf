@@ -6,6 +6,7 @@ public class RunManager : MonoBehaviour
 {
     public static RunManager Instance;
     [SerializeField] private HeroData secondHeroData;
+    [SerializeField] private List<ShopItemData> initialShopItemPool = new List<ShopItemData>();
     public int roomsCleared = 0;
     public int healRoomsSeen = 0;
     public int lastHealRoomOfferedAt = -99;
@@ -19,7 +20,6 @@ public class RunManager : MonoBehaviour
     public List<ShopItemData> currentShopInventory = new List<ShopItemData>();
     public List<ShopItemData> ownedActivatedItems = new List<ShopItemData>();
     public List<ShopItemData> ownedRoundBuffItems = new List<ShopItemData>();
-    [SerializeField] private List<ShopItemData> initialShopItemPool = new List<ShopItemData>();
     public bool currentHealRoomUsed = false;
     public RoomData currentRoom;
     public RoomOfferSet currentOfferSet;
@@ -123,6 +123,7 @@ public class RunManager : MonoBehaviour
             case RoomType.Shop:
                 GenerateShopInventory();
                 SceneManager.LoadScene("ShopScene");
+                break;
 
             case RoomType.Recruit:
                 currentRecruitRoomUsed = false;
