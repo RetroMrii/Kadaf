@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunManager
   secondHeroData: {fileID: 11400000, guid: 371bb41a8788d374c8bbaffc1c47e6e3, type: 2}
+  initialShopItemPool: []
   roomsCleared: 0
   healRoomsSeen: 0
   lastHealRoomOfferedAt: -99
@@ -157,9 +158,11 @@ MonoBehaviour:
   lastRecruitRoomOfferedAt: -99
   shopRoomsSeen: 0
   lastShopRoomOfferedAt: -99
-  gold: 100
+  gold: 0
   shopItemPool: []
   currentShopInventory: []
+  ownedActivatedItems: []
+  ownedRoundBuffItems: []
   currentHealRoomUsed: 0
   currentRoom:
     roomType: 0

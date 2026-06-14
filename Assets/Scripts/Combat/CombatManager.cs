@@ -95,6 +95,7 @@ public class CombatManager : MonoBehaviour
     {
         LoadPartyFromRunState();
         LoadRoomEnemies();
+        CombatRewards.lastCombatGoldReward = CombatRewards.CalculateGoldReward(CombatState.currentEnemies);
 
         battleEnded = false;
         playerTurn = false;

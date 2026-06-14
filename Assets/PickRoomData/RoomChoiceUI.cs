@@ -7,6 +7,7 @@ public class RoomChoiceUI : MonoBehaviour
     [Header("Top Text")]
     [SerializeField] private TMP_Text roomCountText;
     [SerializeField] private TMP_Text chooseRoomText;
+    [SerializeField] private TMP_Text goldText;
 
     [Header("Room Cards")]
     [SerializeField] private Button[] roomButtons;
@@ -45,6 +46,9 @@ public class RoomChoiceUI : MonoBehaviour
 
         if (RunManager.Instance.roomsCleared == 0)
             chooseRoomText.text = "Begin Your Journey";
+
+        if (goldText != null && RunManager.Instance != null)
+            goldText.text = $"Credits: {RunManager.Instance.gold}";
 
         // Hide all first
         for (int i = 0; i < roomButtons.Length; i++)

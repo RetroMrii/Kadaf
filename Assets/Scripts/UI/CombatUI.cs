@@ -30,6 +30,7 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private GameObject endPanel;
     [SerializeField] private TMP_Text resultText;
     [SerializeField] private Button continueButton;
+    [SerializeField] private TMP_Text rewardText;
 
     private bool lastCombatWon = false;
 
@@ -507,5 +508,13 @@ public class CombatUI : MonoBehaviour
 
         if (resultText != null)
             resultText.text = playerWon ? "Victory" : "Defeat";
+
+        if (rewardText != null)
+        {
+            if (playerWon)
+                rewardText.text = $"+{CombatRewards.lastCombatGoldReward} Credits";
+            else
+                rewardText.text = "";
+        }
     }
 }

@@ -15,7 +15,7 @@ public class RunManager : MonoBehaviour
     public int lastRecruitRoomOfferedAt = -99;
     public int shopRoomsSeen = 0;
     public int lastShopRoomOfferedAt = -99;
-    public int gold = 100;
+    public int gold = 0;
     public List<ShopItemData> shopItemPool = new List<ShopItemData>();
     public List<ShopItemData> currentShopInventory = new List<ShopItemData>();
     public List<ShopItemData> ownedActivatedItems = new List<ShopItemData>();
@@ -135,6 +135,7 @@ public class RunManager : MonoBehaviour
     public void OnCombatFinished(HeroUnit[] heroes)
     {
         SavePartyStateFromCombat(heroes);
+        AddGold(CombatRewards.lastCombatGoldReward);
 
         if (currentRoom != null && currentRoom.roomType == RoomType.Boss)
         {
@@ -201,6 +202,11 @@ public class RunManager : MonoBehaviour
     {
         GenerateShopInventory();
         SceneManager.LoadScene("ShopScene");
+    }
+
+    public void AddGold(int amount)
+    {
+        gold += Mathf.Max(0, amount);
     }
 
     public void GenerateShopInventory()
