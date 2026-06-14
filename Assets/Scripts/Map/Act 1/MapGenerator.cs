@@ -17,7 +17,8 @@ public static class MapGenerator
         int roomsCleared,
         int healRoomsSeen, int lastHealRoomOfferedAt,
         int recruitRoomsSeen, int lastRecruitRoomOfferedAt,
-        int shopRoomsSeen, int lastShopRoomOfferedAt
+        int shopRoomsSeen, int lastShopRoomOfferedAt,
+        int randomRoomsSeen, int lastRandomRoomOfferedAt
     )
     {
         RoomOfferSet offerSet = new RoomOfferSet();
@@ -27,6 +28,7 @@ public static class MapGenerator
         bool healAlreadyUsedInSet = false;
         bool recruitAlreadyUsedInSet = false;
         bool shopAlreadyUsedInSet = false;
+        bool randomAlreadyUsedInSet = false;
 
         for (int i = 0; i < 3; i++)
         {
@@ -37,7 +39,10 @@ public static class MapGenerator
                 shopRoomsSeen, lastShopRoomOfferedAt,
                 healAlreadyUsedInSet,
                 recruitAlreadyUsedInSet,
-                shopAlreadyUsedInSet
+                shopAlreadyUsedInSet,
+                randomAlreadyUsedInSet,
+                randomRoomsSeen,
+                lastRandomRoomOfferedAt 
             );
 
             int safety = 20;
@@ -58,7 +63,10 @@ public static class MapGenerator
                     shopRoomsSeen, lastShopRoomOfferedAt,
                     healAlreadyUsedInSet,
                     recruitAlreadyUsedInSet,
-                    shopAlreadyUsedInSet
+                    shopAlreadyUsedInSet,
+                    randomAlreadyUsedInSet,
+                    randomRoomsSeen,
+                    lastRandomRoomOfferedAt
                 );
 
                 safety--;
@@ -76,12 +84,16 @@ public static class MapGenerator
             if (room.roomType == RoomType.Shop)
                 shopAlreadyUsedInSet = true;
 
+            if (room.roomType == RoomType.Random)
+                randomAlreadyUsedInSet = true;
+
             offerSet.options.Add(room);
         }
 
         bool hasHeal = false;
         bool hasRecruit = false;
         bool hasShop = false;
+        bool hasRandom = false;
 
         for (int i = 0; i < offerSet.options.Count; i++)
         {
@@ -95,6 +107,9 @@ public static class MapGenerator
 
             if (type == RoomType.Shop)
                 hasShop = true;
+
+            if (type == RoomType.Random)
+                hasRandom = true;
         }
 
         if (RunManager.Instance != null)
@@ -115,6 +130,12 @@ public static class MapGenerator
             {
                 RunManager.Instance.shopRoomsSeen++;
                 RunManager.Instance.lastShopRoomOfferedAt = roomsCleared;
+            }
+
+            if (hasRandom)
+            {
+                RunManager.Instance.randomRoomsSeen++;
+                RunManager.Instance.lastRandomRoomOfferedAt = roomsCleared;
             }
         }
 
@@ -138,7 +159,10 @@ public static class MapGenerator
         int shopRoomsSeen, int lastShopRoomOfferedAt,
         bool healAlreadyUsedInSet,
         bool recruitAlreadyUsedInSet,
-        bool shopAlreadyUsedInSet
+        bool shopAlreadyUsedInSet,
+        bool randomAlreadyUsedInSet,
+        int randomRoomsSeen,
+        int lastRandomRoomOfferedAt
     )
     {
         List<RoomType> possibleTypes = new List<RoomType>
@@ -148,7 +172,7 @@ public static class MapGenerator
 
         bool healAllowed =
             roomsCleared >= 2 &&
-            healRoomsSeen < 2 &&
+            healRoomsSeen < 3 &&
             (roomsCleared - lastHealRoomOfferedAt) >= 3 &&
             !healAlreadyUsedInSet;
 
@@ -157,7 +181,7 @@ public static class MapGenerator
 
         bool recruitAllowed =
             roomsCleared >= 5 &&
-            recruitRoomsSeen < 2 &&
+            recruitRoomsSeen < 1 &&
             (roomsCleared - lastRecruitRoomOfferedAt) >= 3 &&
             !recruitAlreadyUsedInSet;
 
@@ -166,12 +190,21 @@ public static class MapGenerator
 
         bool shopAllowed =
             roomsCleared >= 6 &&
-            shopRoomsSeen < 2 &&
+            shopRoomsSeen < 3 &&
             (roomsCleared - lastShopRoomOfferedAt) >= 3 &&
             !shopAlreadyUsedInSet;
 
         if (shopAllowed)
             possibleTypes.Add(RoomType.Shop);
+
+        bool randomAllowed =
+            roomsCleared >= 3 &&
+            randomRoomsSeen < 2 &&
+            (roomsCleared - lastRandomRoomOfferedAt) >= 3 &&
+            !randomAlreadyUsedInSet;
+
+        if (randomAllowed)
+            possibleTypes.Add(RoomType.Random);
 
         RoomType chosenType = possibleTypes[Random.Range(0, possibleTypes.Count)];
 
@@ -257,6 +290,13 @@ public static class MapGenerator
                     "A scavenger's stall has been set up in the wreckage.",
                     "Someone has turned an access bay into a market.",
                     "A black-market cache is hidden beyond a service hatch."
+                );
+
+            case RoomType.Random:
+                return GetRandomFrom(
+                    "A malfunctioning bulkhead flickers between destinations.",
+                    "A maintenance elevator descends without a listed floor.",
+                    "A sealed route opens with no warning label."
                 );
 
             case RoomType.Combat:

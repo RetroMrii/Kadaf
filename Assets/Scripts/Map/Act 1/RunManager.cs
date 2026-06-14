@@ -15,6 +15,8 @@ public class RunManager : MonoBehaviour
     public int lastRecruitRoomOfferedAt = -99;
     public int shopRoomsSeen = 0;
     public int lastShopRoomOfferedAt = -99;
+    public int randomRoomsSeen = 0;
+    public int lastRandomRoomOfferedAt = -99;
     public bool currentHealRoomUsed = false;
     public RoomData currentRoom;
     public RoomOfferSet currentOfferSet;
@@ -69,6 +71,8 @@ public class RunManager : MonoBehaviour
         lastRecruitRoomOfferedAt = -99;
         shopRoomsSeen = 0;
         lastShopRoomOfferedAt = -99;
+        randomRoomsSeen = 0;
+        lastRandomRoomOfferedAt = -99;
         currentRoom = null;
         currentOfferSet = null;
         party.Clear();
@@ -113,8 +117,52 @@ public class RunManager : MonoBehaviour
 
     public void SelectRoom(RoomData room)
     {
+        if (room == null)
+            return;
+
+        if (room.roomType == RoomType.Random)
+            room = ResolveRandomRoom();
+
         currentRoom = room;
         EnterCurrentRoom();
+    }
+
+    private RoomData ResolveRandomRoom()
+    {
+        List<RoomType> possibleTypes = new List<RoomType>
+    {
+        RoomType.Combat,
+        RoomType.Heal,
+        RoomType.Shop
+    };
+
+        if (party != null && party.Count < 2 && recruitRoomsSeen < 1)
+            possibleTypes.Add(RoomType.Recruit);
+
+        RoomType resolvedType = possibleTypes[Random.Range(0, possibleTypes.Count)];
+
+        RoomData resolvedRoom = new RoomData
+        {
+            roomType = resolvedType,
+            flavorText = "The route shifts. You only realize where it led after stepping through."
+        };
+
+        if (resolvedType == RoomType.Combat)
+        {
+            resolvedRoom.enemies = new EnemyType[]
+            {
+            GetRandomResolvedEnemy(),
+            GetRandomResolvedEnemy()
+            };
+        }
+
+        return resolvedRoom;
+    }
+
+    private EnemyType GetRandomResolvedEnemy()
+    {
+        int roll = Random.Range(0, 5);
+        return (EnemyType)roll;
     }
 
     public void SavePartyStateFromCombat(HeroUnit[] heroes)
@@ -477,7 +525,8 @@ public class RunManager : MonoBehaviour
                 roomsCleared,
                 healRoomsSeen, lastHealRoomOfferedAt,
                 recruitRoomsSeen, lastRecruitRoomOfferedAt,
-                shopRoomsSeen, lastShopRoomOfferedAt
+                shopRoomsSeen, lastShopRoomOfferedAt,
+                randomRoomsSeen, lastRandomRoomOfferedAt
             );
         }
     }

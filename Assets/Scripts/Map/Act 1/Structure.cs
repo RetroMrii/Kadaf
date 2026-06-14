@@ -7,6 +7,7 @@ public enum RoomType
     Heal,
     Shop,
     Recruit,
+    Random,
     Boss
 }
 
