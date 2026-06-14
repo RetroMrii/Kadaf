@@ -18,8 +18,8 @@ public class AlienUnit : BattleUnit
         defense = alienData.DFS;
 
         fireResistancePercent = alienData.FRC;
-        dodgeChancePercent = alienData.DOG;
-        extraTurnChancePercent = alienData.DCH;
+        dodgeChancePercent = 0;
+        extraTurnChancePercent = 0;
 
         currentHP = maxHP;
         isDead = false;
@@ -34,8 +34,6 @@ public class AlienUnit : BattleUnit
         HideStat(StatType.ATK);
         HideStat(StatType.DFS);
         HideStat(StatType.FRC);
-        HideStat(StatType.DOG);
-        HideStat(StatType.DCH);
     }
 
     public void InitializeFromAssignedData()
@@ -52,8 +50,8 @@ public class AlienUnit : BattleUnit
         defense = alienData.DFS;
 
         fireResistancePercent = alienData.FRC;
-        dodgeChancePercent = alienData.DOG;
-        extraTurnChancePercent = alienData.DCH;
+        dodgeChancePercent = 0;
+        extraTurnChancePercent = 0;
 
         currentHP = maxHP;
         isDead = false;

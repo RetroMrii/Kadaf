@@ -7,6 +7,7 @@ public class RunManager : MonoBehaviour
     public static RunManager Instance;
     [SerializeField] private HeroData secondHeroData;
     public int roomsCleared = 0;
+    [SerializeField] private int roomsBeforeBoss = 10;
     public int healRoomsSeen = 0;
     public int lastHealRoomOfferedAt = -99;
     public int lastHealAmount = 0;
@@ -333,7 +334,7 @@ public class RunManager : MonoBehaviour
 
         currentShopInventory.Remove(item);
 
-        if (item.itemType == ShopItemType.Knowledge)
+        if (item.itemType == ShopItemType.Knowledge || item.itemType == ShopItemType.Tech)
             shopItemPool.Remove(item);
 
         return true;
@@ -370,7 +371,7 @@ public class RunManager : MonoBehaviour
                 break;
 
             case BoosterType.XP:
-                Debug.Log("XP booster bought, but XP system is not implemented yet.");
+                AwardXPToParty(item.xpAmount);
                 break;
         }
     }
@@ -465,7 +466,7 @@ public class RunManager : MonoBehaviour
     {
         currentRoom = null;
 
-        if (roomsCleared >= 10)
+        if (roomsCleared >= roomsBeforeBoss)
         {
             currentOfferSet = new RoomOfferSet();
             currentOfferSet.options.Add(MapGenerator.GenerateBossRoom());

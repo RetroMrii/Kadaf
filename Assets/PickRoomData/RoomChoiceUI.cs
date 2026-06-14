@@ -127,7 +127,6 @@ public class RoomChoiceUI : MonoBehaviour
             case RoomType.Heal: return "HEAL";
             case RoomType.Shop: return "SHOP";
             case RoomType.Recruit: return "RECRUIT";
-            case RoomType.Random: return "RANDOM";
             case RoomType.Boss: return "BOSS";
             default: return "UNKNOWN";
         }
