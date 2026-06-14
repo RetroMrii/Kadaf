@@ -75,8 +75,8 @@ public class RecruitRoomUI : MonoBehaviour
             else
             {
                 candidateInfoText.text =
-                    $"Bonus DMG: {hero.BonusDMG}\n" +
-                    $"Defense: {hero.defense}\n" +
+                    $"Bonus DMG: {hero.ATK}\n" +
+                    $"Defense: {hero.DFS}\n" +
                     $"HP: {hero.maxHP}\n" +
                     $"Mana: {hero.maxMana}\n" +
                     $"{hero.description}";

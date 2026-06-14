@@ -3889,7 +3889,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopUI
   titleText: {fileID: 1634280601}
   goldText: {fileID: 922040227}
-  flavorText: {fileID: 819276803}
+  feedbackText: {fileID: 0}
   continueButton: {fileID: 495092936}
   itemButtons:
   - {fileID: 1898335305}
@@ -3935,6 +3935,7 @@ MonoBehaviour:
   - {fileID: 1859817113}
   - {fileID: 1791288145}
   - {fileID: 1233833248}
+  itemTypeTexts: []
 --- !u!1 &1385573032
 GameObject:
   m_ObjectHideFlags: 0
@@ -4102,6 +4103,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunManager
   secondHeroData: {fileID: 0}
+  roomsCleared: 0
+  healRoomsSeen: 0
+  lastHealRoomOfferedAt: -99
+  lastHealAmount: 0
+  recruitRoomsSeen: 0
+  lastRecruitRoomOfferedAt: -99
+  shopRoomsSeen: 0
+  lastShopRoomOfferedAt: -99
+  currentHealRoomUsed: 0
+  currentRoom:
+    roomType: 2
+    enemies: 
+    flavorText: 
+  currentOfferSet:
+    options: []
+  party: []
+  recruitCandidateHero: {fileID: 0}
+  currentRecruitRoomUsed: 0
+  gold: 0
   initialShopItemPool:
   - {fileID: 11400000, guid: 0c2a74c902d16ab4fb3d50634d4eb060, type: 2}
   - {fileID: 0}
@@ -4113,30 +4133,17 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  roomsCleared: 0
-  healRoomsSeen: 0
-  lastHealRoomOfferedAt: -99
-  lastHealAmount: 0
-  recruitRoomsSeen: 0
-  lastRecruitRoomOfferedAt: -99
-  shopRoomsSeen: 0
-  lastShopRoomOfferedAt: -99
-  gold: 0
   shopItemPool: []
   currentShopInventory:
   - {fileID: 11400000, guid: 0c2a74c902d16ab4fb3d50634d4eb060, type: 2}
-  ownedActivatedItems: []
-  ownedRoundBuffItems: []
-  currentHealRoomUsed: 0
-  currentRoom:
-    roomType: 2
-    enemies: 
-    flavorText: 
-  currentOfferSet:
-    options: []
-  party: []
-  recruitCandidateHero: {fileID: 0}
-  currentRecruitRoomUsed: 0
+  ownedBuffItems: []
+  ownedKnowledgeItems: []
+  ownedTechItems: []
+  hasXenoBiology: 0
+  hasSlyHands: 0
+  xpRewardBonusPercent: 0
+  moneyRewardBonusPercent: 0
+  maxOwnedTechItems: 2
 --- !u!4 &1407359736
 Transform:
   m_ObjectHideFlags: 0

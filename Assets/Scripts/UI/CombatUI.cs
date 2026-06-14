@@ -131,10 +131,10 @@ public class CombatUI : MonoBehaviour
 
         string statsLine = "";
 
-        if (hero.IsStatRevealed(StatType.Attack))
+        if (hero.IsStatRevealed(StatType.ATK))
             statsLine += $"ATK: {hero.GetAttackValue()}";
 
-        if (hero.IsStatRevealed(StatType.Defense))
+        if (hero.IsStatRevealed(StatType.DFS))
         {
             if (statsLine.Length > 0)
                 statsLine += "  ";
@@ -164,10 +164,10 @@ public class CombatUI : MonoBehaviour
 
         string statsLine = "";
 
-        if (alien.IsStatRevealed(StatType.Attack))
+        if (alien.IsStatRevealed(StatType.ATK))
             statsLine += $"ATK: {alien.GetAttackValue()}";
 
-        if (alien.IsStatRevealed(StatType.Defense))
+        if (alien.IsStatRevealed(StatType.DFS))
         {
             if (statsLine.Length > 0)
                 statsLine += "  ";
@@ -512,9 +512,15 @@ public class CombatUI : MonoBehaviour
         if (rewardText != null)
         {
             if (playerWon)
-                rewardText.text = $"+{CombatRewards.lastCombatGoldReward} Credits";
+            {
+                rewardText.text =
+                    $"+{CombatRewards.lastCombatGoldReward} Credits\n" +
+                    $"+{CombatRewards.lastCombatXPReward} XP";
+            }
             else
+            {
                 rewardText.text = "";
+            }
         }
     }
 }

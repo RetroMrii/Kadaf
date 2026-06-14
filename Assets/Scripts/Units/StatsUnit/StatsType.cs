@@ -1,12 +1,22 @@
-using UnityEngine;
-
 public enum StatType
 {
     HP,
-    Attack,
-    Defense,
+    MaxHP,
+
+    ATK,
+    MATK,
+    DFS,
+    MDFS,
+
+    PRC,
+    FRC,
+
+    DOG,
+    CRT,
+    DCH,
+
+    INTL,
+
     Mana,
-    FireResistancePercent,
-    DodgeChancePercent,
-    ExtraTurnChancePercent
+    Stamina
 }

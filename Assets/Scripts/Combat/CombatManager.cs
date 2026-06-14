@@ -96,6 +96,7 @@ public class CombatManager : MonoBehaviour
         LoadPartyFromRunState();
         LoadRoomEnemies();
         CombatRewards.lastCombatGoldReward = CombatRewards.CalculateGoldReward(CombatState.currentEnemies);
+        CombatRewards.lastCombatXPReward = CombatRewards.CalculateXPReward(CombatState.currentEnemies);
 
         battleEnded = false;
         playerTurn = false;
@@ -263,8 +264,8 @@ public class CombatManager : MonoBehaviour
         {
             if (aliens[i] != null && !aliens[i].IsDead)
             {
-                aliens[i].RevealStat(StatType.Attack);
-                aliens[i].RevealStat(StatType.Defense);
+                aliens[i].RevealStat(StatType.ATK);
+                aliens[i].RevealStat(StatType.DFS);
             }
         }
     }

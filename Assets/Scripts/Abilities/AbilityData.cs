@@ -23,17 +23,10 @@ public class AbilityData : ScriptableObject
     public string abilityName;
     [TextArea] public string description;
 
-    [Header("Cost")]
-    public int manaCost = 1;
-
-    [Header("Damage Settings")]
-    public DamageType damageType = DamageType.Physical;
-
     [Header("Ability Rules")]
     public AbilityType abilityType;
     public TargetType targetType;
     public int basePower = 0;
-    public bool canBeDodged = true;
 
     [Header("Buff Settings")]
     public int damageBuffAmount = 0;
@@ -45,4 +38,24 @@ public class AbilityData : ScriptableObject
     public bool appliesBurn = false;
     public int burnDamagePerTurn = 0;
     public int burnDuration = 0;
+
+    [Header("Resource Costs")]
+    public int staminaCost = 0;
+    public int manaCost = 0;
+
+    [Header("Damage Typing")]
+    public DamageType damageType = DamageType.Physical;
+    public bool usesMagicScaling = false;
+    public bool canCrit = true;
+    public bool canBeDodged = true;
+
+    [Header("Elemental Effects")]
+    public int fireStacks = 0;
+    public int poisonStacks = 0;
+    public int frostStacks = 0;
+    public int electricStacks = 0;
+
+    [Header("Lifesteal")]
+    public bool hasLifeSteal = false;
+    [Range(0, 100)] public int lifeStealPercent = 0;
 }

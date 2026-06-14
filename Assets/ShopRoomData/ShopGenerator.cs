@@ -10,20 +10,15 @@ public static class ShopGenerator
         if (itemPool == null || itemPool.Count == 0)
             return result;
 
-        List<ShopItemData> shuffledPool = new List<ShopItemData>(itemPool);
+        List<ShopItemData> availableItems = new List<ShopItemData>(itemPool);
 
-        for (int i = 0; i < shuffledPool.Count; i++)
+        while (availableItems.Count > 0 && result.Count < itemCount)
         {
-            int swapIndex = Random.Range(i, shuffledPool.Count);
-            ShopItemData temp = shuffledPool[i];
-            shuffledPool[i] = shuffledPool[swapIndex];
-            shuffledPool[swapIndex] = temp;
+            int randomIndex = Random.Range(0, availableItems.Count);
+
+            result.Add(availableItems[randomIndex]);
+            availableItems.RemoveAt(randomIndex);
         }
-
-        int finalCount = Mathf.Min(itemCount, shuffledPool.Count);
-
-        for (int i = 0; i < finalCount; i++)
-            result.Add(shuffledPool[i]);
 
         return result;
     }

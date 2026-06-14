@@ -8,6 +8,7 @@ public class RoomChoiceUI : MonoBehaviour
     [SerializeField] private TMP_Text roomCountText;
     [SerializeField] private TMP_Text chooseRoomText;
     [SerializeField] private TMP_Text goldText;
+    [SerializeField] private TMP_Text xpText;
 
     [Header("Room Cards")]
     [SerializeField] private Button[] roomButtons;
@@ -35,10 +36,15 @@ public class RoomChoiceUI : MonoBehaviour
 
         if (roomCountText != null)
         {
-            int roomNumber = Mathf.Min(RunManager.Instance.roomsCleared + 1, 11);
-            roomCountText.text = roomNumber <= 10
-                ? $"ROOM {roomNumber}"
-                : "BOSS";
+            if (RunManager.Instance.currentOfferSet.options.Count == 1 &&
+                RunManager.Instance.currentOfferSet.options[0].roomType == RoomType.Boss)
+            {
+                roomCountText.text = "BOSS";
+            }
+            else
+            {
+                roomCountText.text = $"ROOM {RunManager.Instance.roomsCleared + 1}";
+            }
         }
 
         if (chooseRoomText != null)
@@ -49,6 +55,25 @@ public class RoomChoiceUI : MonoBehaviour
 
         if (goldText != null && RunManager.Instance != null)
             goldText.text = $"Credits: {RunManager.Instance.gold}";
+
+        if (xpText != null && RunManager.Instance != null)
+        {
+            int totalXP = 0;
+
+            if (RunManager.Instance.party != null)
+            {
+                for (int i = 0; i < RunManager.Instance.party.Count; i++)
+                    totalXP += RunManager.Instance.party[i].currentXP;
+            }
+
+            xpText.text = $"XP: {totalXP}";
+        }
+
+        if (roomButtons == null || roomButtons.Length == 0)
+        {
+            Debug.LogError("RoomChoiceUI: roomButtons are not assigned.");
+            return;
+        }
 
         // Hide all first
         for (int i = 0; i < roomButtons.Length; i++)
@@ -102,6 +127,7 @@ public class RoomChoiceUI : MonoBehaviour
             case RoomType.Heal: return "HEAL";
             case RoomType.Shop: return "SHOP";
             case RoomType.Recruit: return "RECRUIT";
+            case RoomType.Random: return "RANDOM";
             case RoomType.Boss: return "BOSS";
             default: return "UNKNOWN";
         }

@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f282da1145b5c794cb7a8a5e04bc9ba2, type: 3}
-  m_Name: Heal_Low
+  m_Name: Heal_Mid
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
-  itemName: Bandage(Earth)
-  description: 'Heals 15%
+  itemName: GeloBlood
+  description: 'Heal 30%
 
 
-    piece of cloth from the planet earth used by humans
+    Gelo blood from the gelo species from the gelian planet
 
-    such
-    a weak technology'
+    known
+    for quick healing
+
+    such a waste of attribute on a weak species'
   itemType: 0
-  price: 7
-  boosterType: 0
-  boosterStage: 1
-  healPercent: 15
+  price: 10
+  boosterType: 1
+  boosterStage: 2
+  healPercent: 30
   xpAmount: 0
   buffedStat: 0
   buffAmount: 0

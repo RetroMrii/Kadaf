@@ -84,13 +84,13 @@ public class HeroSelectManager : MonoBehaviour
         {
             statsText.text =
                 $"HP: {hero.maxHP}\n" +
-                $"BonusDMG: {hero.BonusDMG}\n" +
-                $"Defense: {hero.defense}\n" +
+                $"BonusDMG: {hero.ATK}\n" +
+                $"Defense: {hero.DFS}\n" +
                 $"Mana: {hero.maxMana}\n" +
                 $"Mana/Turn: {hero.manaPerTurn}\n" +
-                $"Fire Resist: {hero.fireResistancePercent}%\n" +
-                $"Dodge: {hero.dodgeChancePercent}%\n" +
-                $"Extra Turn: {hero.extraTurnChancePercent}%";
+                $"Fire Resist: {hero.FRC}%\n" +
+                $"Dodge: {hero.DOG}%\n" +
+                $"Extra Turn: {hero.DCH}%";
         }
 
         if (kitText != null)

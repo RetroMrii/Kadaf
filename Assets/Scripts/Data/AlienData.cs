@@ -7,15 +7,26 @@ public class AlienData : ScriptableObject
     public string alienName;
     [TextArea] public string description;
 
-    [Header("Base Stats")]
-    public int maxHP = 50;
-    public int attack = 8;
-    public int defense = 2;
+    [Header("Core Stats")]
+    public int maxHP;
 
-    [Header("Advanced Stats")]
-    public int fireResistancePercent = 0;
-    public int dodgeChancePercent = 0;
-    public int extraTurnChancePercent = 0;
+    public int ATK;
+    public int MATK;
+    public int DFS;
+    public int MDFS;
+
+    [Range(0, 100)] public int PRC;
+    [Range(0, 100)] public int FRC;
+
+    public int INTL;
+
+    [Header("Rewards")]
+    public int xpReward = 0;
+    public int goldReward = 0;
+
+    [Header("Visual States")]
+    public Sprite normalSprite;
+    public Sprite lowHPSprite;
 
     [Header("Alien Actions")]
     public AlienActionData[] actions;

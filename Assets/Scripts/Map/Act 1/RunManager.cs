@@ -6,7 +6,6 @@ public class RunManager : MonoBehaviour
 {
     public static RunManager Instance;
     [SerializeField] private HeroData secondHeroData;
-    [SerializeField] private List<ShopItemData> initialShopItemPool = new List<ShopItemData>();
     public int roomsCleared = 0;
     public int healRoomsSeen = 0;
     public int lastHealRoomOfferedAt = -99;
@@ -15,17 +14,34 @@ public class RunManager : MonoBehaviour
     public int lastRecruitRoomOfferedAt = -99;
     public int shopRoomsSeen = 0;
     public int lastShopRoomOfferedAt = -99;
-    public int gold = 0;
-    public List<ShopItemData> shopItemPool = new List<ShopItemData>();
-    public List<ShopItemData> currentShopInventory = new List<ShopItemData>();
-    public List<ShopItemData> ownedActivatedItems = new List<ShopItemData>();
-    public List<ShopItemData> ownedRoundBuffItems = new List<ShopItemData>();
     public bool currentHealRoomUsed = false;
     public RoomData currentRoom;
     public RoomOfferSet currentOfferSet;
     public List<RunHeroState> party = new List<RunHeroState>();
     public HeroData recruitCandidateHero;
     public bool currentRecruitRoomUsed = false;
+
+    [Header("Economy")]
+    public int gold = 0;
+
+    [Header("Shop")]
+    [SerializeField] private List<ShopItemData> initialShopItemPool = new List<ShopItemData>();
+
+    public List<ShopItemData> shopItemPool = new List<ShopItemData>();
+    public List<ShopItemData> currentShopInventory = new List<ShopItemData>();
+
+    public List<ShopItemData> ownedBuffItems = new List<ShopItemData>();
+    public List<ShopItemData> ownedKnowledgeItems = new List<ShopItemData>();
+    public List<ShopItemData> ownedTechItems = new List<ShopItemData>();
+
+    [Header("Knowledge Bonuses")]
+    public bool hasXenoBiology = false;
+    public bool hasSlyHands = false;
+    public int xpRewardBonusPercent = 0;
+    public int moneyRewardBonusPercent = 0;
+
+    [SerializeField] private int maxOwnedTechItems = 2;
+    public int MaxOwnedTechItems => maxOwnedTechItems;
 
     private void Awake()
     {
@@ -55,7 +71,19 @@ public class RunManager : MonoBehaviour
         currentRoom = null;
         currentOfferSet = null;
         party.Clear();
+        gold = 0;
+
         shopItemPool = new List<ShopItemData>(initialShopItemPool);
+        currentShopInventory.Clear();
+
+        ownedBuffItems.Clear();
+        ownedKnowledgeItems.Clear();
+        ownedTechItems.Clear();
+
+        hasXenoBiology = false;
+        hasSlyHands = false;
+        xpRewardBonusPercent = 0;
+        moneyRewardBonusPercent = 0;
 
         if (selectedHero != null)
         {
@@ -65,7 +93,11 @@ public class RunManager : MonoBehaviour
                 maxHP = selectedHero.maxHP,
                 currentHP = selectedHero.maxHP,
                 currentMana = 0,
-                isAvailable = true
+                isAvailable = true,
+                hasJoinedRun = true,
+                currentXP = 0,
+                level = 1,
+                pendingStatAllocations = 0
             });
         }
     }
@@ -135,7 +167,16 @@ public class RunManager : MonoBehaviour
     public void OnCombatFinished(HeroUnit[] heroes)
     {
         SavePartyStateFromCombat(heroes);
-        AddGold(CombatRewards.lastCombatGoldReward);
+
+        int baseGoldReward = CombatRewards.lastCombatGoldReward;
+        int finalGoldReward = GetModifiedGoldReward(baseGoldReward);
+        AddGold(finalGoldReward);
+        CombatRewards.lastCombatGoldReward = finalGoldReward;
+
+        int baseXPReward = CombatRewards.lastCombatXPReward;
+        int finalXPReward = GetModifiedXPReward(baseXPReward);
+        AwardXPToParty(finalXPReward);
+        CombatRewards.lastCombatXPReward = finalXPReward;
 
         if (currentRoom != null && currentRoom.roomType == RoomType.Boss)
         {
@@ -198,10 +239,17 @@ public class RunManager : MonoBehaviour
         SceneManager.LoadScene("PickScene");
     }
 
-    private void ResolveShopRoom()
+    public int GetLimitedTechCount()
     {
-        GenerateShopInventory();
-        SceneManager.LoadScene("ShopScene");
+        int count = 0;
+
+        for (int i = 0; i < ownedTechItems.Count; i++)
+        {
+            if (ownedTechItems[i] != null && ownedTechItems[i].countsTowardTechLimit)
+                count++;
+        }
+
+        return count;
     }
 
     public void AddGold(int amount)
@@ -209,15 +257,57 @@ public class RunManager : MonoBehaviour
         gold += Mathf.Max(0, amount);
     }
 
+    public int GetModifiedGoldReward(int baseAmount)
+    {
+        if (baseAmount <= 0)
+            return 0;
+
+        float multiplier = 1f + (moneyRewardBonusPercent / 100f);
+        return Mathf.CeilToInt(baseAmount * multiplier);
+    }
+
+    public int GetModifiedXPReward(int baseAmount)
+    {
+        if (baseAmount <= 0)
+            return 0;
+
+        float multiplier = 1f + (xpRewardBonusPercent / 100f);
+        return Mathf.CeilToInt(baseAmount * multiplier);
+    }
+
+    private void AwardXPToParty(int amount)
+    {
+        if (amount <= 0 || party == null || party.Count == 0)
+            return;
+
+        List<RunHeroState> availableHeroes = new List<RunHeroState>();
+
+        for (int i = 0; i < party.Count; i++)
+        {
+            if (party[i] != null && party[i].isAvailable)
+                availableHeroes.Add(party[i]);
+        }
+
+        if (availableHeroes.Count == 0)
+            return;
+
+        int xpPerHero = amount / availableHeroes.Count;
+        int remainder = amount % availableHeroes.Count;
+
+        for (int i = 0; i < availableHeroes.Count; i++)
+        {
+            int finalAmount = xpPerHero;
+
+            if (i == 0)
+                finalAmount += remainder;
+
+            availableHeroes[i].currentXP += finalAmount;
+        }
+    }
+
     public void GenerateShopInventory()
     {
         currentShopInventory = ShopGenerator.GenerateShopInventory(shopItemPool, 10);
-    }
-
-    public void LeaveShop()
-    {
-        roomsCleared++;
-        GenerateNextOfferSet();
     }
 
     public bool TryBuyShopItem(ShopItemData item)
@@ -228,73 +318,101 @@ public class RunManager : MonoBehaviour
         if (gold < item.price)
             return false;
 
+        if (item.itemType == ShopItemType.Tech && item.countsTowardTechLimit)
+        {
+            if (GetLimitedTechCount() >= maxOwnedTechItems)
+                return false;
+        }
+
+        if (item.itemType == ShopItemType.Knowledge && ownedKnowledgeItems.Contains(item))
+            return false;
+
         gold -= item.price;
+
         ApplyShopItem(item);
+
         currentShopInventory.Remove(item);
+
+        if (item.itemType == ShopItemType.Knowledge)
+            shopItemPool.Remove(item);
 
         return true;
     }
 
     private void ApplyShopItem(ShopItemData item)
     {
-        if (item == null)
-            return;
-
         switch (item.itemType)
         {
-            case ShopItemType.Heal:
-                ApplyHealItem(item);
+            case ShopItemType.Booster:
+                ApplyBoosterItem(item);
                 break;
 
-            case ShopItemType.RoundBuff:
-                ApplyRoundBuffItem(item);
+            case ShopItemType.Buff:
+                ownedBuffItems.Add(item);
                 break;
 
-            case ShopItemType.ActivatedBuff:
-                ApplyActivatedBuffItem(item);
+            case ShopItemType.Knowledge:
+                ApplyKnowledgeItem(item);
                 break;
 
-            case ShopItemType.Revive:
-                ApplyReviveItem(item);
+            case ShopItemType.Tech:
+                ownedTechItems.Add(item);
                 break;
         }
     }
 
-    private void ApplyHealItem(ShopItemData item)
+    private void ApplyBoosterItem(ShopItemData item)
     {
+        switch (item.boosterType)
+        {
+            case BoosterType.Health:
+                ApplyHealthBooster(item);
+                break;
+
+            case BoosterType.XP:
+                Debug.Log("XP booster bought, but XP system is not implemented yet.");
+                break;
+        }
+    }
+
+    private void ApplyHealthBooster(ShopItemData item)
+    {
+        if (party == null)
+            return;
+
         for (int i = 0; i < party.Count; i++)
         {
             if (!party[i].isAvailable)
                 continue;
 
             int healAmount = Mathf.CeilToInt(party[i].maxHP * (item.healPercent / 100f));
-            party[i].currentHP = Mathf.Min(party[i].currentHP + healAmount, party[i].maxHP);
+            party[i].currentHP = Mathf.Min(party[i].maxHP, party[i].currentHP + healAmount);
         }
     }
 
-    private void ApplyRoundBuffItem(ShopItemData item)
+    private void ApplyKnowledgeItem(ShopItemData item)
     {
-        ownedRoundBuffItems.Add(item);
-        Debug.Log($"Purchased round buff: {item.itemName}");
-    }
+        if (!ownedKnowledgeItems.Contains(item))
+            ownedKnowledgeItems.Add(item);
 
-    private void ApplyActivatedBuffItem(ShopItemData item)
-    {
-        ownedActivatedItems.Add(item);
-        Debug.Log($"Purchased activated buff: {item.itemName}");
-    }
-
-    private void ApplyReviveItem(ShopItemData item)
-    {
-        for (int i = 0; i < party.Count; i++)
+        switch (item.knowledgeType)
         {
-            if (!party[i].isAvailable)
-            {
-                party[i].isAvailable = true;
-                party[i].currentHP = 1;
-                return;
-            }
+            case KnowledgeType.XenoBiology:
+                hasXenoBiology = true;
+                xpRewardBonusPercent = Mathf.Max(xpRewardBonusPercent, item.rewardBonusPercent);
+                break;
+
+            case KnowledgeType.SlyHands:
+                hasSlyHands = true;
+                moneyRewardBonusPercent = Mathf.Max(moneyRewardBonusPercent, item.rewardBonusPercent);
+                break;
         }
+    }
+
+    public void LeaveShop()
+    {
+        roomsCleared++;
+        GenerateNextOfferSet();
     }
 
 
@@ -315,7 +433,11 @@ public class RunManager : MonoBehaviour
             maxHP = recruitCandidateHero.maxHP,
             currentHP = recruitCandidateHero.maxHP,
             currentMana = 0,
-            isAvailable = true
+            isAvailable = true,
+            hasJoinedRun = true,
+            currentXP = 0,
+            level = 1,
+            pendingStatAllocations = 0
         });
 
         currentRecruitRoomUsed = true;

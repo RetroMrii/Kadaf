@@ -31,6 +31,19 @@ public class BattleUnit : MonoBehaviour
     public int DodgeChancePercent => dodgeChancePercent;
     public int ExtraTurnChancePercent => extraTurnChancePercent;
     public bool IsDead => isDead;
+    public int ATK;
+    public int MATK;
+    public int DFS;
+    public int MDFS;
+
+    public int PRC;
+    public int FRC;
+
+    public int DOG;
+    public int CRT;
+    public int DCH;
+
+    public int INTL;
 
     protected virtual void Awake()
     {

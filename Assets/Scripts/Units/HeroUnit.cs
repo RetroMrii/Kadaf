@@ -29,16 +29,16 @@ public class HeroUnit : BattleUnit
     {
         unitName = heroData.heroName;
         maxHP = heroData.maxHP;
-        attack = heroData.BonusDMG;
-        defense = heroData.defense;
+        attack = heroData.ATK;
+        defense = heroData.DFS;
 
         maxMana = heroData.maxMana;
         manaPerTurn = heroData.manaPerTurn;
         currentMana = 0;
 
-        fireResistancePercent = heroData.fireResistancePercent;
-        dodgeChancePercent = heroData.dodgeChancePercent;
-        extraTurnChancePercent = heroData.extraTurnChancePercent;
+        fireResistancePercent = heroData.FRC;
+        dodgeChancePercent = heroData.DOG;
+        extraTurnChancePercent = heroData.DCH;
 
         abilities = heroData.abilities;
 
@@ -61,12 +61,12 @@ public class HeroUnit : BattleUnit
     private void SetupDefaultStatVisibility()
     {
         RevealStat(StatType.HP);
-        HideStat(StatType.Attack);
-        HideStat(StatType.Defense);
+        HideStat(StatType.ATK);
+        HideStat(StatType.DFS);
         RevealStat(StatType.Mana);
-        HideStat(StatType.FireResistancePercent);
-        HideStat(StatType.DodgeChancePercent);
-        HideStat(StatType.ExtraTurnChancePercent);
+        HideStat(StatType.FRC);
+        HideStat(StatType.DOG);
+        HideStat(StatType.DCH);
     }
 
     public AbilityData[] GetAbilities()
